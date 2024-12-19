@@ -10,42 +10,42 @@ cursor = connection.cursor()
 print("Connected to the database successfully!")
 
 # Add Features (One at a Time)
-def add_todo_list():
+def add_task():
     name = input("Name: ")
     description = input("Description: ")
     due_date = input("Duedate(YYYY-MM-DD): ")
     status = "Incomplete"
-    list_query = """
+    task_query = """
 INSERT INTO todo_list (name, description, due_date, status)
 VALUES (?, ?, ?, ?);
 """
-    list = (name, description, due_date, status)
-    cursor.execute(list_query, list)
+    task = (name, description, due_date, status)
+    cursor.execute(task_query, task)
     connection.commit()
 
-# View All Lists
-def view_todo_lists():
+# View All tasks
+def view_tasks():
     select_query = "SELECT * FROM todo_list;"
     cursor.execute(select_query)
-    todos = cursor.fetchall()
-    print("Current lists in the database:")
-    for todo in todos:
-        print(todo)    
-    if not todos:
-        print("No lists found in the database.")
+    tasks = cursor.fetchall()
+    print("Current tasks in the database:")
+    for task in tasks:
+        print(task)    
+    if not tasks:
+        print("No tasks found in the database.")
 
-# Update List Status
-def mark_complete(list_id):
-    cursor.execute("UPDATE todo_list SET status = 'Complete' WHERE id = ?", (list_id,))
+# Update task Status
+def mark_complete(task_id):
+    cursor.execute("UPDATE todo_list SET status = 'Complete' WHERE id = ?", (task_id,))
     connection.commit()
 
 # Delete a list
-def delete_list(list_id):
-    cursor.execute("DELETE FROM todo_list WHERE id = ?", (list_id,))
+def delete_task(task_id):
+    cursor.execute("DELETE FROM todo_list WHERE id = ?", (task_id,))
     connection.commit()
 
-# Clear all lists
-def clear_lists():
+# Clear all tasks
+def clear_tasks():
     cursor.execute("DELETE FROM todo_list")
     # Reset id to 1
     cursor.execute("DELETE FROM sqlite_sequence WHERE name='todo_list'")
@@ -57,9 +57,9 @@ def get_status():
     return 'Incomplete' if status_option == 1 else 'Complete' if status_option == 2 else None
 
 # Filter lists by due date or status
-def filter_lists():
+def filter_tasks():
     try:
-        filter_option = int(input("\nSort list by\n1. Due date\n2. Status\n3. Due date and Status\n==> "))
+        filter_option = int(input("\nSort tasks by\n1. Due date\n2. Status\n3. Due date and Status\n==> "))
         if filter_option == 1:
             cursor.execute("SELECT * FROM todo_list ORDER BY due_date")
         elif filter_option == 2:
@@ -72,37 +72,37 @@ def filter_lists():
             print("Please try again.")
     except ValueError:
         print("\nInvalid input! Please enter a number.")
-    todos = cursor.fetchall()
-    print("\nCurrent lists in the database:")
-    for todo in todos:
-        print(todo)
-    if not todos:
-        print("No lists found in the database.")
+    tasks = cursor.fetchall()
+    print("\nCurrent tasks in the database:")
+    for task in tasks:
+        print(task)
+    if not tasks:
+        print("No tasks found in the database.")
 
 while add_on:
     print("\n===========================")
     print("Hello, how can I help you?")
     print("===========================\n")
     try:
-        option = int(input("1. Add List\n2. View Lists\n3. Mark List as Complete\n4. Delete List\n5. Exit\n==> "))
+        option = int(input("1. Add Task\n2. View Tasks\n3. Mark Task as Complete\n4. Delete Task\n5. Exit\n==> "))
         if option == 1:
-            add_todo_list()
-            view_todo_lists()
+            add_task()
+            view_tasks()
         elif option == 2:
-            view_todo_lists()
-            filter_lists()
+            view_tasks()
+            filter_tasks()
         elif option == 3:
-            list_id = input("Which id did you finish? ")
-            mark_complete(list_id)
-            view_todo_lists()
+            task_id = input("Which id did you finish? ")
+            mark_complete(task_id)
+            view_tasks()
         elif option == 4:
             sub_option = input("Do you want to clear all lists?(y/n) ")
             if sub_option == 'y':
-                clear_lists()
+                clear_tasks()
             elif sub_option == 'n':
-                list_id = input("Which id do you want to delete? ")
-                delete_list(list_id)
-            view_todo_lists()
+                task_id = input("Which id do you want to delete? ")
+                delete_task(task_id)
+            view_tasks()
         elif option == 5:
             print("\n===================")
             print("Thank you for using.")
